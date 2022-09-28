@@ -1,4 +1,3 @@
-
 const axios = require('axios')
 
 
@@ -9,24 +8,19 @@ const getPokemon = async(req, res) => {
 
         const POKE_API = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=51&offset=0')
         const data_poke_api = POKE_API.data.results
-        const URLS = []
+        console.log(data_poke_api)
 
-        data_poke_api.map((url) => {
-            URLS.push(url.url) 
+        const tipos = await axios.get('https://pokeapi.co/api/v2/type')
+        console.log(tipos.data)
+
+        for(let i = 0; i < data_poke_api.length; i++) {
             
-        })
-
-        for(let i = 0; i < URLS.length; i++) {
-
-            const ingresar = await axios.get(URLS[i])
+            const ingresar = await axios.get(data_poke_api[i].url)
+            const todosLosPokemon = ingresar.data
+            
             let arrayImagenes = []
-            
-            const todosLosPokemon = await ingresar.data
-            
             let imagenesUrl = todosLosPokemon.sprites.other.home.front_default
             arrayImagenes.push(imagenesUrl)
-            
-            
             
                 pokemons.push({
                     id : todosLosPokemon.id,
@@ -48,21 +42,16 @@ const getPokemon = async(req, res) => {
                     }
                 })
         }
-        
-        
-    
-        return res.status(200).json({
-            data : pokemons,
+       
+        return res.status(200).json(
+             pokemons
             
-        })
+        )
 
     } catch (error) {
         console.error(error)
     }
-    
 }
-
-
 
 module.exports = getPokemon
 
