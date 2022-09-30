@@ -1,58 +1,27 @@
-const axios = require('axios')
+const axios = require("axios");
+const db = require("../db/index");
 
+const getPokemon = async (req, res) => {
 
-const getPokemon = async(req, res) => {
-    try {
-        
-        let pokemons = []
+  try {
+  
+   const pokemons = await db.query("select * from pokemon");
 
-        const POKE_API = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=51&offset=0')
-        const data_poke_api = POKE_API.data.results
-        console.log(data_poke_api)
+    return res.status(200).json(pokemons.rows);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-        const tipos = await axios.get('https://pokeapi.co/api/v2/type')
-        console.log(tipos.data)
+const getStats = async (req,res) => {
+  try {
+    
+    const stast = await db.query("select * from stats")
+    return res.status(200).json(stast.rows)
 
-        for(let i = 0; i < data_poke_api.length; i++) {
-            
-            const ingresar = await axios.get(data_poke_api[i].url)
-            const todosLosPokemon = ingresar.data
-            
-            let arrayImagenes = []
-            let imagenesUrl = todosLosPokemon.sprites.other.home.front_default
-            arrayImagenes.push(imagenesUrl)
-            
-                pokemons.push({
-                    id : todosLosPokemon.id,
-                    name : todosLosPokemon.name,
-                    tipo : todosLosPokemon.types.length === 2 ? [todosLosPokemon.types[0].type.name, todosLosPokemon.types[1].type.name] : [todosLosPokemon.types[0].type.name],
-                    img : imagenesUrl,
-                    about : {
-                        weight : todosLosPokemon.weight,
-                        height : todosLosPokemon.height,
-                        moves : todosLosPokemon.abilities.length === 2 ? [todosLosPokemon.abilities[0].ability.name, todosLosPokemon.abilities[1].ability.name] : [todosLosPokemon.abilities[0].ability.name]
-                    },
-                    stats: {
-                        hp: todosLosPokemon.stats[0].base_stat,
-                        atk: todosLosPokemon.stats[1].base_stat,
-                        def: todosLosPokemon.stats[2].base_stat, 
-                        satk: todosLosPokemon.stats[3].base_stat,
-                        sdef: todosLosPokemon.stats[4].base_stat,
-                        spd: todosLosPokemon.stats[5].base_stat
-                    }
-                })
-        }
-       
-        return res.status(200).json(
-             pokemons
-            
-        )
-
-    } catch (error) {
-        console.error(error)
-    }
+  } catch (error) {
+    console.error(error)
+  }
 }
 
-module.exports = getPokemon
-
-
+module.exports = { getPokemon, getStats };
