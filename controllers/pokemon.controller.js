@@ -88,6 +88,10 @@ const agregarPokemon = async(req, res) => {
   }
 
 }
+
+const agregarUsuario = () => {
+  
+}
  
 
 

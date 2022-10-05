@@ -3,7 +3,6 @@ const app = express();
 const pokemones = require('./routes/pokemon.route')
 const cors = require('cors')
 const port = 3010;
-require("dotenv").config()
 
 app.use(express.json());
 app.use(cors())
