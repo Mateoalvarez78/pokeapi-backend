@@ -32,7 +32,7 @@ const agregarPokemon = async(req, res) => {
   const pokemonesData = await axios.get(`https://pokeapi.co/api/v2/pokemon/${req.body.nombre}`)
   const pokemones = pokemonesData.data
   
-  console.log(pokemones)
+
 
   let nombreEnBD = await db.query('select name from pokemon')
   let nombrePokemonABuscar = nombreEnBD.rows.find((poke) => {
@@ -40,7 +40,7 @@ const agregarPokemon = async(req, res) => {
   })
 
   if(nombrePokemonABuscar) {
-    res.json('Ya existe el pokemon')
+    res.send(error())
   }
   else {
     let objetoPokemonAgregar = {
@@ -88,6 +88,8 @@ const agregarPokemon = async(req, res) => {
   }
 
 }
+
+
  
 
 
