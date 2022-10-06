@@ -6,10 +6,10 @@ const registro = async (req, res) => {
   try {
     const mail = req.body.mail;
     const password = req.body.password;
-    console.log(mail, password, "backend");
-
+    
+ 
     const user = await db.query(
-      "select * from usuariosPokedex where mail = $1",
+      "select * from users where mail = $1",
       [mail]
     );
 
@@ -25,7 +25,7 @@ const registro = async (req, res) => {
     const passwordHashed = await bcrypt.hash(password, salt);
 
     await db.query(
-      "insert into usuariosPokedex (mail, password) values ($1, $2)",
+      "insert into users (mail, password) values ($1, $2)",
       [mail, passwordHashed]
     );
 
@@ -35,4 +35,40 @@ const registro = async (req, res) => {
   } catch (error) {}
 };
 
-module.exports = { registro };
+
+const login = async(req, res) => {
+  try {
+    
+      const {mail, password} = req.body
+
+      console.log(mail, password)
+      
+      const user = await db.query(`select * from users where mail = $1`, [mail])
+
+      if (user.rowCount === 0) {
+        return res.status(400).json({
+          data: [],
+          message: "El usuario no existe, registrate",
+          succes: false,
+        });
+      }
+
+      const validarContraseña = await bcrypt.compare(password, user.rows[0].password)
+
+      if(!validarContraseña){
+        return res.status(400).json({
+          data: [],
+          message: "Password inválido",
+          succes: false,
+        });
+      }
+
+      res.status(200).json({
+          data : "Bienvenido"
+      })
+  } catch (error) {
+      
+  }
+}
+
+module.exports =  {registro, login} ;
