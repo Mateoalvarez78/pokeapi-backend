@@ -25,12 +25,12 @@ const getStats = async (req,res) => {
 }
 
 const agregarPokemon = async(req, res) => {
-
+  
   try {
     
-  
-  const pokemonesData = await axios.get(`https://pokeapi.co/api/v2/pokemon/${req.body.nombre}`)
-  const pokemones = pokemonesData.data
+    const pokemonesData = await axios.get(`https://pokeapi.co/api/v2/pokemon/${req.body.nombre}`)
+    const pokemones = pokemonesData.data
+    console.log( req.body.nombre)
   
 
 
@@ -39,8 +39,11 @@ const agregarPokemon = async(req, res) => {
     return poke.name === req.body.nombre
   })
 
+
   if(nombrePokemonABuscar) {
-    res.send(error())
+    return res.status(500).json({
+      message: "No se encontró pokemon."
+    })
   }
   else {
     let objetoPokemonAgregar = {
@@ -84,7 +87,9 @@ const agregarPokemon = async(req, res) => {
   }
   }
   catch (error) {
-    res.send(error).status(500)
+    res.status(500).json({
+      message: "No existe el pokemon"
+    })
   }
 
 }
